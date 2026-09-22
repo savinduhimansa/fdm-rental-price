@@ -1,0 +1,11 @@
+limitation,evidence,what it means for users
+"Scope: rents $250-$10,000 per month only","Steps 2, 5.9: placeholders, weekly rates and sale prices outside",The platform should refuse or warn outside this range
+Sizes are often estimates (heaping),Step 8.2: 21.4% multiples of 100 sq ft vs ~1% expected,Caps how precisely size can predict rent
+smoking_allowed is probably a form default,Step 1/8.7: 67% 'yes',Its effect on rent is not trustworthy as a policy effect
+Per-bedroom pricing in student housing,"Steps 10.7, 11.6: 4-bed/4-bath median $830; per-bed wording 4x more common","Predictions for 4+ bed homes with a bath per bedroom are unreliable, especially in college towns"
+Sale listings with rent-like prices may remain,Step 5.8: sale wording not usable as a rule,Small residual noise in the target
+Thin coverage of small regions and mixed markets,Step 11.5: error 25.1% in regions < 30 listings vs 18.5% in 500+,Less reliable predictions in rural areas and resort regions
+Few very expensive homes,"Step 11.1: 0.7% of listings above $4,000",Luxury rents are likely to be under-predicted
+Listings from the same building or agent can share photos,Step 12.4: shared photos across the split,Test score may be slightly optimistic for known buildings
+One collection period (snapshot),Step 12.2: posting-order check,Rents describe the collection period; retrain before real use
+Craigslist listings are asking rents,Data source,"Predictions are asking prices, not signed-lease rents"

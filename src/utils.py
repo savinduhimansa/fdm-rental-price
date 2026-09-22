@@ -172,3 +172,28 @@ RARE_MIN_SHARE = 0.01   # categories with under 1% of training listings are grou
 # Step 9
 RARE_MIN_COUNT = 50   # 9.4: the rare categories differ in rent (type 32%, parking 65% spread), so every
                       #      category with 50+ training listings keeps its own one-hot column
+
+# Step 11 (error-analysis groups, also used when the models are evaluated)
+PRICE_BANDS = [250, 750, 1_000, 1_500, 2_500, 4_000, 10_000]   # band edges for monthly rent (USD)
+REGION_SIZE_BANDS = [0, 30, 100, 500, float("inf")]            # training listings per region
+STUDENT_LAYOUT_MIN_BEDS = 4   # 10.7: 4+ bedrooms with a bathroom per bedroom are often priced per bedroom
+
+
+def price_band(price):
+    """Label each rent (or predicted rent) with its price band, for error analysis by band."""
+    labels = [f"${lo:,}-${hi:,}" for lo, hi in zip(PRICE_BANDS[:-1], PRICE_BANDS[1:])]
+    return pd.cut(price, bins=PRICE_BANDS, labels=labels, include_lowest=True)
+
+
+def region_size_band(regions, train_counts):
+    """Label each listing by how many TRAINING listings its region has (train_counts = value_counts)."""
+    edges = REGION_SIZE_BANDS
+    labels = [f"{int(lo)}+" if hi == float("inf") else f"{int(lo)}-{int(hi) - 1}"
+              for lo, hi in zip(edges[:-1], edges[1:])]
+    return pd.cut(regions.map(train_counts).fillna(0), bins=edges, labels=labels, right=False)
+
+
+def student_layout(df):
+    """True for homes with 4+ bedrooms and at least one bathroom per bedroom (Step 10.7).
+    Uses only beds and baths, so it is available at prediction time."""
+    return df["beds"].ge(STUDENT_LAYOUT_MIN_BEDS) & df["baths"].ge(df["beds"])

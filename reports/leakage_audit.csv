@@ -1,0 +1,12 @@
+risk,kind,evidence,status,control
+"Identifier used as a feature (id, url, image_url, region name)",target / memorisation,column audit: none in MODEL_FEATURES,controlled,MODEL_FEATURES in utils.py (12.1)
+Rent written in the description,target,25.6% of descriptions state the exact rent,controlled,description is not a feature; strip dollar amounts if text is ever used (12.3)
+"Price-derived columns (log_price, ppsf, price bands)",target,none in MODEL_FEATURES; bands used only for evaluation,controlled,target transform only inside TransformedTargetRegressor (12.7)
+Same or identical listing on both sides of the split,contamination,"id, url, features(+price), text, family overlaps: all 0",controlled,Step 4 dedup + Step 7 grouped split (12.4)
+Test listing shares a photo with a training listing,contamination (weak),27.60% of test listings,residual,"reported as a limitation; same building/agent, not the same home (12.4)"
+Relatives split across CV folds,contamination (CV),random folds look better by +0.052 R2 (k-NN demo),controlled,GroupKFold on group_id for all model selection (12.6)
+Region target encoding includes the listing's own rent,pipeline,"false gain +0.007 R2 overall, +0.104 in regions < 30 listings",controlled,cross-fitted TargetEncoder / grouped cross-fitting in the state-prior encoder (12.5)
+"Imputer, scaler, coordinate fill fitted on evaluation data",pipeline,demonstrated pattern in 12.6 pipeline,controlled,"all learned steps inside one sklearn Pipeline, fitted on training folds only"
+Cleaning rules decided on data including test listings,pipeline,"price rules are fixed thresholds, not learned",controlled,no data-dependent threshold before the split (12.7)
+Test set used for decisions,evaluation,test opened only for fingerprint checks in Steps 7 and 12,controlled,"load_test() used once, for the final evaluation"
+Rents changing during data collection,time drift,"Spearman(id, rent) +0.139; earliest vs latest tenth +13.7%",open,snapshot limitation; retrain on fresh listings before real use (12.2)

@@ -1,0 +1,24 @@
+group,definition,listings,baseline_median_abs_%,baseline_bias_%
+true rent $250-$750,price_band(price),22299.0,35.71428571428572,35.71428571428572
+"true rent $750-$1,000",price_band(price),36877.0,14.245796410061029,9.999999999999986
+"true rent $1,000-$1,500",price_band(price),51954.0,14.285714285714263,-4.711630312603237
+"true rent $1,500-$2,500",price_band(price),31726.0,21.86564444059573,-18.857178330416858
+"true rent $2,500-$4,000",price_band(price),6444.0,33.89988965864015,-33.89988965864015
+"true rent $4,000-$10,000",price_band(price),1104.0,58.24350649350649,-58.24350649350649
+predicted rent $250-$750,price_band(prediction),7819.0,18.39999999999997,-1.7108781317856314
+"predicted rent $750-$1,000",price_band(prediction),49602.0,18.351128233351645,0.0
+"predicted rent $1,000-$1,500",price_band(prediction),65375.0,18.844984802431664,4.440892098500626e-14
+"predicted rent $1,500-$2,500",price_band(prediction),25707.0,19.11764705882355,0.2005012531328232
+"predicted rent $2,500-$4,000",price_band(prediction),1901.0,20.83333333333335,2.220446049250313e-14
+region with 0-29 training listings,"region_size_band(region, train counts)",556.0,25.06483323818676,0.2958579881657153
+region with 30-99 training listings,"region_size_band(region, train counts)",5969.0,21.21212121212124,0.0
+region with 100-499 training listings,"region_size_band(region, train counts)",40880.0,18.913573383510077,-1.1102230246251565e-14
+region with 500+ training listings,"region_size_band(region, train counts)",102999.0,18.548387096774242,2.220446049250313e-14
+other 4+ bedroom homes,student_layout(df) / beds >= 4,7326.0,33.50661123621458,-28.946258050188757
+"student layout (4+ beds, baths >= beds)",student_layout(df) / beds >= 4,442.0,59.794802867383474,29.220910314994452
+parking_options = valet parking,rare category (< 1%),108.0,29.651094507574744,-23.937917713229666
+parking_options = no parking,rare category (< 1%),1092.0,17.78492247421977,0.7800648059503645
+type = in-law,rare category (< 1%),134.0,26.871657754010712,24.864293175487482
+type = loft,rare category (< 1%),366.0,22.299319727891163,-15.741168953661761
+type = flat,rare category (< 1%),373.0,25.0,-14.784763827382774
+type = cottage/cabin,rare category (< 1%),514.0,28.84868421052633,14.713930170468725

@@ -78,3 +78,39 @@ The training set confirms the Step 6 transform decisions (log for size, plain co
 **No funnel in the region chart.** Small regions (< 30 listings) are mostly cheaper than the national median and less spread out (std of log medians 0.16) than large regions (0.27). Region size is itself linked to rent, and real market differences outweigh small-sample noise. Smoothed target encoding is kept for the tiniest regions; Step 10.5 tests whether a state-level fallback beats the national one.
 
 **Features under 1% η² on their own:** wheelchair access, furnished, cats, dogs. Kept for now; re-checked with mutual information in Step 10.3.
+
+
+
+
+## Step 10 – Multivariate relationships (training set, `09_eda_multivariate.ipynb`)
+
+**Redundancy.** The size features overlap (Spearman: sqfeet–beds 0.80, sqfeet–baths 0.72, beds–baths 0.66), and so do the pet flags (cats–dogs 0.85). No VIF reaches the moderate level of 5 (highest 3.72, cats_allowed; size trio 3.07 / 2.81 / 2.08). But the bedroom coefficient flips sign once size and baths are held constant (+9.6% alone → −11.7% together per standard deviation): at the same floor space, more bedrooms means smaller rooms. Ridge is used for the linear model, and `beds` is interpreted only "at the same size".
+
+**Feature ranking confirmed.** Mutual information (corrected with a shuffled-target baseline, 40,000-listing sample) and η² agree (rank agreement 0.81): location first (region, longitude, latitude, state), then size. Latitude rises from #8 (η²) to #3 (MI), showing that coordinates carry more information together. MI for weak flags is probably inflated by repeated exact prices within listing families. No feature is dropped; weak features will be judged by permutation importance in grouped CV.
+
+**Location confounding.** Region median size and rent are unrelated overall (ρ = +0.08); only the most expensive metros have small homes. The size elasticity changes little within regions (0.45 → 0.49), but within regions size explains 32.2% of the remaining variation vs 14.5% nationally. Location explains the Step 9 puzzles: studios vs 1-bed +0.6% observed → −11.1% within region; the 5-bedroom dip disappears; "no parking" vs "off-street" +15.0% → +4.8%.
+
+**Region vs state.** Variance of log rent: 31.1% between states, 17.0% between regions within states, 51.9% within regions. For small regions (< 30 listings), the state average (excluding the region) is twice as close to the region's rent as the national average (typical error 22.7% vs 44.0%; closer for 83% of them); small regions are on average 29% cheaper than the national level. Decision: keep region (target-encoded) and state (one-hot), and test a state-prior region encoding against the default `TargetEncoder`.
+
+**Interactions are modest.** Within-region size elasticity ranges 0.40 (PA) – 0.53 (CA) with no trend by rent level (ρ = −0.04); the order of property types by $/sq ft is stable across the five largest states (agreement 0.91). California costs about twice as much per sq ft for every type, a multiplicative effect that the log target turns into an additive one. Ridge is expected to be a competitive baseline.
+
+**Per-bedroom pricing (student housing).** 4-bed homes with a bath per bedroom: median $830 vs $1,500 for other 4-beds, $0.53 vs $0.84 per sq ft (−37%; 5 beds −34%); per-bedroom wording 7.6% vs 1.9% of descriptions; the 876 suspects (0.58%) concentrate in university towns (Gainesville, San Marcos, Tallahassee, Tippecanoe, Champaign-Urbana, College Station…). Recorded as a data limitation (cleaning rules were frozen before the split); tracked as an error-analysis group; optional indicator feature (4+ beds, baths ≥ beds).
+
+
+
+
+## Step 11 – Imbalance, regression interpretation (training set, `10_eda_imbalance.ipynb`)
+
+**Target imbalance.** 95.0% of training listings rent for $2,500 or less (73.9% for $1,500 or less); the $4,000–$10,000 band holds only 0.7% (1,104 listings), 47× fewer than the busiest band ($1,000–$1,500, 34.5%). The log target reduces skew from 2.70 to 0.39 but does not remove the thin tail. Decision: no oversampling or weighting; model `log1p(price)`; report every final metric per price band.
+
+**Baseline to beat.** A location-only baseline (region median, state fallback), evaluated out-of-fold with `GroupKFold(5)` on `group_id`: MAE $318, RMSE $518, median absolute error 18.8%, R² 0.468 on log rent (consistent with region η² 48.1% in-sample). Saved in `reports/baseline_location_only.csv`.
+
+**Regression to the mean.** Grouped by true rent, the baseline's bias runs from +35.7% ($250–$750) to −58.2% ($4,000+), and it never predicts above $4,000 (the highest region median is about $2,900). Grouped by predicted rent, it is unbiased (−1.7% to +0.2%) with a typical error of 18–21%. The final model is evaluated both ways: the true-band slope should flatten, and the predicted-band bias should stay near zero.
+
+**Rare groups.** Every category keeps its own one-hot column in every CV fold (valet parking ≈ 86 listings per learning fold). The riskiest rare groups (baseline bias ≥ 15%): homes over 3,000 sq ft (−52.4%), 4+ baths (−34.1%), 5+ beds (−33.3%), valet parking (−23.9%), in-law units (+24.9%), lofts (−15.7%).
+
+**Geographic imbalance.** Listings are concentrated (Gini 0.53; the largest 10% of regions hold 32.8%). Baseline error rises from 18.5% in regions with 500+ listings to 25.1% in regions with fewer than 30 (4.3% of listings are in regions under 100). The worst regions are mixed resort/rural markets (Palm Springs, Rockies, Santa Fe), small rural regions (Clovis, Scottsbluff, Roswell) and a college town (Morgantown).
+
+**Student-layout homes** (442; 4+ beds, baths ≥ beds): the worst group (typical error 59.8%). Their baseline bias (+29.2%) is opposite to other 4+ bedroom homes (−28.9%). They mix per-room student lets (46.2% under $750) and large luxury homes (28.7% above $2,500), concentrated in San Marcos, Gainesville, Tallahassee, Denver and Tippecanoe. An indicator feature helps only in combination with location and size.
+
+**Error-analysis plan.** 23 groups (true and predicted price bands, region-size bands, large-home groups, rare categories) are fixed before the final evaluation in `reports/error_analysis_plan.csv`.
