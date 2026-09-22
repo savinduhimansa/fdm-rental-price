@@ -1,0 +1,23 @@
+column,meaning,storage_dtype,variable_type,n_unique,missing_%,planned_role
+id,Unique Craigslist listing identifier,int64,Identifier,384977,0.0,Drop (no predictive meaning)
+url,Web address of the listing,str,Identifier,384977,0.0,Drop
+region,Craigslist regional site the listing was posted on,str,Nominal categorical (high cardinality),404,0.0,Feature (needs encoding/grouping)
+region_url,Web address of the Craigslist regional site,str,Nominal categorical (high cardinality),413,0.0,Unique location key (replaces region; region names are ambiguous)
+price,Advertised monthly rent in USD,int64,Continuous numeric,3961,0.0,TARGET
+type,"Property type (apartment, house, condo, ...)",str,Nominal categorical,12,0.0,Feature
+sqfeet,Floor area in square feet,int64,Continuous numeric,3277,0.0,Feature
+beds,Number of bedrooms,int64,Discrete numeric,11,0.0,Feature
+baths,Number of bathrooms (half-baths as .5),float64,Discrete numeric,20,0.0,Feature
+cats_allowed,1 if cats are allowed,int64,Binary,2,0.0,Feature
+dogs_allowed,1 if dogs are allowed,int64,Binary,2,0.0,Feature
+smoking_allowed,1 if smoking is allowed,int64,Binary,2,0.0,Feature
+wheelchair_access,1 if wheelchair accessible,int64,Binary,2,0.0,Feature
+electric_vehicle_charge,1 if EV charging available,int64,Binary,2,0.0,Feature
+comes_furnished,1 if furnished,int64,Binary,2,0.0,Feature
+laundry_options,Laundry facility type,str,Nominal categorical,5,20.53,Feature
+parking_options,Parking facility type,str,Nominal categorical,7,36.54,Feature
+image_url,Web address of the listing's main photo,str,Identifier,181068,0.0,Drop (use only to detect duplicates)
+description,Free-text listing description written by the poster,str,Unstructured text,280836,0.0,Leakage check (may contain price)
+lat,Latitude of the listing,float64,Continuous numeric (geographic),56772,0.5,Feature (after validity check)
+long,Longitude of the listing,float64,Continuous numeric (geographic),54035,0.5,Feature (after validity check)
+state,Two-letter state code of the Craigslist site (may not match the true location),str,Nominal categorical,51,0.0,Feature (after validity check)
