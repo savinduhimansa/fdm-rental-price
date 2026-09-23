@@ -101,4 +101,4 @@
 | 97 | 12-Leakage | Leaky region encoding inflates R2 by +0.007 overall and +0.104 in regions with < 30 listings | 12.5 encoding demonstration | Region encoding must be cross-fitted (grouped for the state-prior encoder) |
 | 98 | 12-Leakage | Random folds overstate k-NN R2 by +0.052 vs grouped folds | 12.6 cross-validation demonstration | All tuning and model selection with GroupKFold on group_id, inside a single Pipeline |
 | 99 | 12-Leakage | 11 leakage risks: controlled 9, residual 1, open 1 | 12.8 risk register; reports/leakage_audit.csv | Fix before modelling: ['Rents changing during data collection'] |
-| 100 | 13-Summary | EDA complete: 99 logged observations across 13 of 13 steps; 11 leakage risks, 1 open | 13.1-13.4; reports/eda_decisions_table.md, pipeline_spec.csv, leakage_audit.csv, limitations.csv | Resolve open risks / missing steps before modelling |
+| 100 | 13-Summary | EDA complete: 100 logged observations across 13 of 13 steps; 11 leakage risks, 1 open | 13.1-13.4; reports/eda_decisions_table.md, pipeline_spec.csv, leakage_audit.csv, limitations.csv | Resolve open risks / missing steps before modelling |
